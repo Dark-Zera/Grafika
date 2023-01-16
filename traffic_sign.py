@@ -1,16 +1,18 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import pandas as pd
 from PIL import Image
 import os
 from sklearn.model_selection import train_test_split
 from keras.utils import to_categorical
 from keras.models import Sequential
 from keras.layers import Conv2D, MaxPool2D, Dense, Flatten, Dropout
+from sklearn.metrics import accuracy_score
 
 # Setting variables
 data = []
 labels = []
-classes = 22
+classes = 43
 cur_path = os.getcwd()
 
 # Get all images
@@ -79,3 +81,21 @@ plt.xlabel('epochs')
 plt.ylabel('loss')
 plt.legend()
 plt.show()
+
+
+# Testing accuracy on test dataset
+y_test = pd.read_csv('Test.csv')
+labels = y_test["ClassId"].values
+imgs = y_test["Path"].values
+data = []
+for img in imgs:
+    image = Image.open(img)
+    image = image.resize((30, 30))
+    data.append(np.array(image))
+X_test = np.array(data)
+pred = np.argmax(model.predict(X_test), axis=-1)
+model.save("traffic_classifier.h5")
+
+
+# Accuracy with the test data
+print(accuracy_score(labels, pred))
