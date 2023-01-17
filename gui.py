@@ -63,9 +63,8 @@ def classify():
     img = keras.preprocessing.image.load_img(image_to_classify_path, target_size=(30, 30))
     img_array = keras.preprocessing.image.img_to_array(img)
     img_array = tf.expand_dims(img_array, 0)
-    img_array = keras.applications.mobilenet.preprocess_input(img_array)
-    pred = model.predict([img_array])
-    window["SignName"].update(names[np.argmax(pred)])
+    pred = np.argmax(model.predict([img_array]), axis=-1)[0]
+    window["SignName"].update(names[pred + 1])
 
     try:
         res, img_to_show = cv2.imencode(".png", cv2.imread(image_to_classify_path))
